@@ -7,9 +7,9 @@ export default function Login() {
   const { login } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-  const [teamCode, setTeamCode] = useState(import.meta.env.VITE_TEAM_CODE ?? "");
+  const [teamCode, setTeamCode] = useState(import.meta.env.VITE_TEAM_CODE ?? "TEAM-001");
   const [email, setEmail] = useState(import.meta.env.VITE_DEFAULT_EMAIL ?? "operator@tuckersoft.com");
-  const [password, setPassword] = useState(import.meta.env.VITE_DEFAULT_PASSWORD ?? "");
+  const [password, setPassword] = useState(import.meta.env.VITE_DEFAULT_PASSWORD ?? "Pizza-TEAM-001");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -46,3 +46,4 @@ export default function Login() {
     </div>
   );
 }
+

@@ -15,6 +15,14 @@ const blockedResponseHeaders = new Set([
   "transfer-encoding",
 ]);
 
+function setCors(req, res) {
+  const origin = req.headers.origin || "*";
+  res.setHeader("access-control-allow-origin", origin);
+  res.setHeader("access-control-allow-methods", "GET,POST,PATCH,OPTIONS");
+  res.setHeader("access-control-allow-headers", "authorization,content-type");
+  res.setHeader("vary", "Origin");
+}
+
 function buildTargetUrl(req) {
   const incoming = new URL(req.url || "/api/v1", "http://localhost");
   const path = incoming.pathname.replace(/^\/api\/v1\/?/, "");
@@ -44,13 +52,21 @@ function readRawBody(req) {
 
 async function getBody(req) {
   const method = req.method || "GET";
-  if (method === "GET" || method === "HEAD") return undefined;
+  if (method === "GET" || method === "HEAD" || method === "OPTIONS") return undefined;
   if (req.body === undefined) return readRawBody(req);
   if (Buffer.isBuffer(req.body) || typeof req.body === "string") return req.body;
   return JSON.stringify(req.body);
 }
 
 export default async function handler(req, res) {
+  setCors(req, res);
+
+  if (req.method === "OPTIONS") {
+    res.statusCode = 204;
+    res.end();
+    return;
+  }
+
   try {
     const response = await fetch(buildTargetUrl(req), {
       method: req.method,
@@ -61,7 +77,9 @@ export default async function handler(req, res) {
 
     res.statusCode = response.status;
     response.headers.forEach((value, key) => {
-      if (!blockedResponseHeaders.has(key.toLowerCase())) res.setHeader(key, value);
+      if (!blockedResponseHeaders.has(key.toLowerCase()) && !key.toLowerCase().startsWith("access-control-")) {
+        res.setHeader(key, value);
+      }
     });
 
     const body = Buffer.from(await response.arrayBuffer());

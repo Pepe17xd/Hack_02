@@ -1,8 +1,10 @@
 import axios, { AxiosError } from "axios";
 import type { ApiErrorResponse } from "../types";
 
+const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || "/api/v1";
+
 export const api = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL,
+  baseURL: apiBaseUrl,
   timeout: 15000,
 });
 
