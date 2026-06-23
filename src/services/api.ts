@@ -2,7 +2,7 @@ import axios, { AxiosError } from "axios";
 import type { ApiErrorResponse } from "../types";
 
 const deployedApiBaseUrl = "https://hackaton-20261-front-587720740455.us-east1.run.app/api/v1";
-const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || (import.meta.env.DEV ? "/api/v1" : deployedApiBaseUrl);
+const apiBaseUrl = import.meta.env.DEV ? (import.meta.env.VITE_API_BASE_URL || "/api/v1") : deployedApiBaseUrl;
 
 export const api = axios.create({
   baseURL: apiBaseUrl,
@@ -31,3 +31,4 @@ export function getApiErrorMessage(error: unknown): string {
   }
   return "Error inesperado";
 }
+
